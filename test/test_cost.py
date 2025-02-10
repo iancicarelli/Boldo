@@ -32,5 +32,10 @@ class TestCostProcessor(unittest.TestCase):
             print(group)
         
 
+    def test_get_column_e_values(self):
+        values = self.cost_processor.get_column_e_values()
+        print(f"valores = {values}")
+
+
 if __name__ == "__main__":
     unittest.main()

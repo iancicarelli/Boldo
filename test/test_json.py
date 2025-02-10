@@ -22,5 +22,9 @@ class TestJson(unittest.TestCase):
         ila_values = self.cost_processor.compare_with_json()
         print("Lista de valores ILA: ", ila_values)
 
+
+    def test_multiply_lists(self):
+        final_values = self.cost_processor.multiply_lists()
+        print(f"valores sexoooo = {final_values}")
 if __name__ == "__main__":
     unittest.main()

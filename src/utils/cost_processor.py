@@ -1,5 +1,7 @@
 from utils.excel_processor import ExcelProcessor
 import json
+from openpyxl import workbook
+import os 
 
 class CostProcessor:
     def __init__(self, maestra_path, orion_path, bd_ila_path):
@@ -53,8 +55,11 @@ class CostProcessor:
         return result
     
     def compare_with_json(self):
-        # Cargar el archivo JSON
-        json_path = r"C:\Users\HP\Desktop\BoldoGit\Boldo\src\data\ilas.json"
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        # Subir dos niveles para salir de la carpeta "utils" y llegar al directorio raíz del proyecto
+        project_root = os.path.dirname(os.path.dirname(current_dir))
+        # Crear la ruta relativa al archivo JSON desde el directorio raíz del proyecto
+        json_path = os.path.join(project_root, "src","data", "ilas.json") 
         with open(json_path, "r", encoding="utf-8") as f:
             ila_json = json.load(f)
         # Crear un diccionario de nombres y montos desde el JSON
@@ -70,3 +75,73 @@ class CostProcessor:
                 result_montos.append(1.19)  # Retorna el valor por defecto 1.19 si no hay coincidencia
 
         return result_montos
+
+    def get_column_e_values(self):
+        """Extrae los valores de la columna E de maestra.xlsx y los almacena en una lista.
+        Si un valor está vacío o contiene '#N/A' o 'N/A', se reemplaza por 'N/A'.
+        """
+        self.maestra_processor.read_excel()
+        maestra_sheet = self.maestra_processor.get_sheet()
+
+        column_e_values = []
+        for row in maestra_sheet.iter_rows(min_row=2, max_row=maestra_sheet.max_row, min_col=5, max_col=5):
+            value = row[0].value
+
+            if value is None or str(value).strip().upper() in ["#N/A", "N/A"]:
+                column_e_values.append("N/A")
+            else:
+                column_e_values.append(value)
+
+        return column_e_values
+
+
+    def multiply_lists(self):
+        """Multiplica los valores de get_column_e_values() y compare_with_json().
+        Si alguno de los valores es 'N/A' o '#N/A', retorna 'N/A' en esa posición.
+        """
+        column_e_values = self.get_column_e_values()
+        json_values = self.compare_with_json()
+
+        # Asegurar que ambas listas tienen la misma longitud
+        length = min(len(column_e_values), len(json_values))
+
+        result = []
+        for i in range(length):
+            val1 = column_e_values[i]
+            val2 = json_values[i]
+
+            # Si alguno de los valores no es un número, retornar 'N/A'
+            if isinstance(val1, (int, float)) and isinstance(val2, (int, float)):
+                result.append(round(val1 * val2,2))
+            else:
+                result.append("N/A")
+
+        return result
+    
+    def replace_non_numeric_values(self, values):
+        """Reemplaza valores no numéricos con 0.0 y asegura que todos los valores sean numéricos."""
+        cleaned_values = []
+        for v in values:
+            if isinstance(v, (int, float)):
+                cleaned_values.append(float(v))  # Asegurar que sea número
+            else:
+                cleaned_values.append(0.0)  # Reemplaza valores no numéricos con 0.0
+        return cleaned_values
+
+    def write_to_excel(self, output_path):
+        result = self.multiply_lists()  # Obtener los resultados de la multiplicación
+        result = self.replace_non_numeric_values(result)  # Asegurar que todos los valores sean numéricos
+
+        wb = workbook()
+        ws = wb.active
+        ws.title = "Resultados"
+
+        # Escribir los valores en la columna A
+        for i, value in enumerate(result, start=1):
+            ws.cell(row=i, column=1, value=value)
+
+        try:
+            wb.save(output_path)
+            print(f"Archivo Excel guardado correctamente en: {output_path}")
+        except Exception as e:
+            print(f"Error al guardar el archivo Excel: {e}")
