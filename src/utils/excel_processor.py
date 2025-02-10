@@ -40,13 +40,7 @@ class ExcelProcessor:
             # Crear un nuevo libro de trabajo y una hoja
           # Cargar el archivo existente (que ya tiene las dos hojas)
             workbook = load_workbook(output_path)
-
-            # Crear la tercera hoja
-            sheet3 = workbook.create_sheet("FORMATO_ENTRADA_DETALLE")
-
-            # Agregar las cabeceras en la tercera hoja
-            self._add_headers(sheet3)
-            self._write_additional_data(sheet3)
+            sheet3 = workbook["FORMATO_ENTRADA_DETALLE"]
 
             # Agregar los datos procesados desde la fila 12
             for row_num, format_obj in enumerate(out_formats, start=12):

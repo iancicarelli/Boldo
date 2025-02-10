@@ -11,7 +11,7 @@ from utils.cost_processor import CostProcessor
 class TestJson(unittest.TestCase):
     def setUp(self):
         # Rutas de los archivos de entrada
-        self.maestra_path = r"C:\Users\HP\Desktop\BoldoGit\maestra.xlsx"
+        self.maestra_path = r"C:\Users\HP\Desktop\BoldoGit\pldcostos.xlsx"
         self.orion_path = r"C:\Users\HP\Desktop\BoldoGit\BD ORION.xlsx"
         self.bd_ila_path = r"C:\Users\HP\Desktop\BoldoGit\Boldo\src\data\BDilas.xlsx"
         

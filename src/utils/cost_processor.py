@@ -2,6 +2,7 @@ from utils.excel_processor import ExcelProcessor
 import json
 from openpyxl import workbook
 import os 
+import sys
 
 class CostProcessor:
     def __init__(self, maestra_path, orion_path, bd_ila_path):
@@ -19,10 +20,12 @@ class CostProcessor:
     # Extraer códigos desde la columna A de maestra.xlsx
         maestra_codes = [row[0].value for row in maestra_sheet.iter_rows(min_row=2, max_row=maestra_sheet.max_row, min_col=1, max_col=1) if row[0].value]
     # Diccionario para almacenar coincidencias {codigo: descripcion}
+        print(f"maestra_codes = {maestra_codes}")
         matching_dict = {}
     # Buscar coincidencias en BD ORION.xlsx (columna D) y obtener la descripción de la columna F
         for row in orion_sheet.iter_rows(min_row=2, max_row=orion_sheet.max_row, min_col=4, max_col=6):
             orion_code = row[0].value  # Código en columna D
+            
             group = row[2].value  # Descripción en columna F
             if orion_code in maestra_codes:
                 matching_dict[orion_code] = group  # Guardar la coincidencia
@@ -53,19 +56,40 @@ class CostProcessor:
                 result.append("N/A")  # Si no hay coincidencia o el valor es "N/A"
 
         return result
-    
-    def compare_with_json(self):
-        current_dir = os.path.dirname(os.path.abspath(__file__))
+    def get_json_path(self):
+        if getattr(sys, 'frozen', False):
+        # Si el script está siendo ejecutado desde el .exe
+            current_dir = sys._MEIPASS  # Directorio temporal donde PyInstaller coloca los archivos
+        else:
+            # Si está siendo ejecutado como un script en desarrollo
+            current_dir = os.path.dirname(os.path.abspath(__file__))
+
         # Subir dos niveles para salir de la carpeta "utils" y llegar al directorio raíz del proyecto
         project_root = os.path.dirname(os.path.dirname(current_dir))
-        # Crear la ruta relativa al archivo JSON desde el directorio raíz del proyecto
-        json_path = os.path.join(project_root, "src","data", "ilas.json") 
+
+        # Crear la ruta correcta al archivo JSON desde el directorio raíz del proyecto o el directorio temporal
+        json_path = os.path.join(project_root, "src", "data", "ilas.json")
+
+        # Si estás empaquetando el ejecutable con --add-data, los archivos estarán en el directorio temporal en lugar de "src/data"
+        if getattr(sys, 'frozen', False):  # Si se ejecuta como .exe
+            json_path = os.path.join(sys._MEIPASS, "data", "ilas.json")
+
+        return json_path
+
+    def compare_with_json(self):
+        # Obtener la ruta al archivo JSON usando el método get_json_path
+        json_path = self.get_json_path()
+
+        # Leer el archivo JSON
         with open(json_path, "r", encoding="utf-8") as f:
             ila_json = json.load(f)
+
         # Crear un diccionario de nombres y montos desde el JSON
         json_mapping = {entry["Nombre"]: entry["MONTO"] for entry in ila_json}
+
         # Obtener la lista de valores de ILA desde match_ila_values_with_groups
         ila_values = self.match_ila_values_with_groups()
+
         # Comparar y crear la lista de montos correspondientes
         result_montos = []
         for value in ila_values:
