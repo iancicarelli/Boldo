@@ -11,7 +11,7 @@ from utils.cost_processor import CostProcessor  # Asumiendo que cost_processor.p
 class TestCostProcessor(unittest.TestCase):
     def setUp(self):
     # Rutas de los archivos de entrada
-        self.maestra_path = r"C:\Users\HP\Desktop\BoldoGit\maestra.xlsx"
+        self.maestra_path = r"C:\Users\HP\Desktop\BoldoGit\pldcostos.xlsx"
         self.orion_path = r"C:\Users\HP\Desktop\BoldoGit\BD ORION.xlsx"
         self.bd_ila_path = r"C:\Users\HP\Desktop\BoldoGit\Boldo\src\data\BDilas.xlsx"
     
@@ -21,7 +21,7 @@ class TestCostProcessor(unittest.TestCase):
     def test_get_matching_groups(self):
         # Llamar al método get_matching_groups para obtener las coincidencias
         matching_groups = self.cost_processor.get_matching_groups()
-        
+
         # Verificar que se encontraron coincidencias
         self.assertIsNotNone(matching_groups)
         self.assertGreater(len(matching_groups), 0)
@@ -31,10 +31,6 @@ class TestCostProcessor(unittest.TestCase):
         for group in matching_groups:
             print(group)
         
-
-    def test_get_column_e_values(self):
-        values = self.cost_processor.get_column_e_values()
-        print(f"valores = {values}")
 
 
 if __name__ == "__main__":
