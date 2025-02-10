@@ -1,0 +1,11 @@
+[
+    {"Nombre": "N/A", "MONTO": 1.19},
+    {"Nombre": "NO TIENE", "MONTO": 1.19},
+    {"Nombre": "IVA ANTICIPADO CARNE", "MONTO": 1.24},
+    {"Nombre": "IVA ANTICIPADO HARINA", "MONTO": 1.31},
+    {"Nombre": "CERVEZAS", "MONTO": 1.395},
+    {"Nombre": "LICOROSOS", "MONTO": 1.505},
+    {"Nombre": "BEBIDAS SIN AZUCAR", "MONTO": 1.29},
+    {"Nombre": "VINOS", "MONTO": 1.395},
+    {"Nombre": "BEBIDAS AZUCARADAS", "MONTO": 1.37}
+]
