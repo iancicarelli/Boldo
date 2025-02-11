@@ -1,5 +1,6 @@
 from ttkthemes import ThemedTk
 from utils.constructor import Constructor
+from utils.path_manager import PathManager
 from tkinter import Label, Button, Entry, filedialog, StringVar
 from tkinter import messagebox
 from tkinter import ttk
@@ -15,14 +16,17 @@ class Menu:
         self.root.title("Pino")
         self.root.geometry("700x400")
         self.root.resizable(False, False)
+        self.path_manager = PathManager()
 
         # Cargar el tema forest-light
-        self.root.tk.call("source", r"C:/Users/HP/Desktop/BoldoGit/Boldo/src/visuals/themes/forest-light.tcl")
+        theme_path = self.path_manager.get_theme_path("forest-light.tcl")
+        self.root.tk.call("source", theme_path)
         self.root.tk.call("ttk::style", "theme", "use", "forest-light")
         ttk.Style().theme_use("forest-light")
 
         # Cargar imagen de fondo
-        self.bg_image = Image.open(r"C:/Users/HP/Desktop/BoldoGit/Boldo/src/visuals/themes/fondoboldo.jpg")
+        bg_image_path = self.path_manager.get_image_path("fondoboldo.jpg")
+        self.bg_image = Image.open(bg_image_path)
         self.bg_image = self.bg_image.resize((700, 400), Image.Resampling.LANCZOS)  # Ajustar tamaño
         self.bg_photo = ImageTk.PhotoImage(self.bg_image)
 
@@ -30,24 +34,17 @@ class Menu:
         self.canvas = tk.Canvas(self.root, width=700, height=400)
         self.canvas.pack(fill="both", expand=True)
         self.canvas.create_image(0, 0, image=self.bg_photo, anchor="nw")
-
-        self.is_frozen = getattr(sys, 'frozen', False)
-
-        # Establecer las rutas fijas
-        self.BASE_DIR = Path(sys._MEIPASS if self.is_frozen else __file__).resolve().parent.parent  # Subir dos niveles desde 'visuals' o 'utils'
-        self.DATA_DIR = self.BASE_DIR / "data"  # La carpeta 'data' está dentro de 'src'
+       
 
         # Construir las rutas a los archivos dentro de 'data'
-        self.input_path = self.DATA_DIR / "formatosalida.xlsx"
-        self.bd_ila_path = self.DATA_DIR / "BDilas.xlsx"
+        self.input_path = self.path_manager.get_input_path()
+        self.bd_ila_path = self.path_manager.get_bd_ila_path()
 
-        # Convertir las rutas a cadenas si se necesita compatibilidad con librerías que no usan Path
-        self.input_path = str(self.input_path)
-        self.bd_ila_path = str(self.bd_ila_path)
 
         self.create_widgets()
 
     def create_widgets(self):
+       
         # Crear un Frame sobre el Canvas para los widgets
         self.input_frame = ttk.Frame(self.root, padding="20")
         self.input_frame.place(relx=0.5, rely=0.5, anchor="center")  # Centrar en la ventana
@@ -101,7 +98,7 @@ class Menu:
         if not maestra_path or not orion_path or not output_dir or not output_name:
             messagebox.showwarning("Advertencia", "Por favor, completa todos los campos.")
             return
-
+        
         try:
             constructor = Constructor(self.input_path, output_path, maestra_path, orion_path, self.bd_ila_path)
             constructor.execute()

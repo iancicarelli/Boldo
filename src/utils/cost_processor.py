@@ -1,4 +1,5 @@
 from utils.excel_processor import ExcelProcessor
+from utils.path_manager import PathManager
 import json
 from openpyxl import workbook
 import os 
@@ -8,7 +9,8 @@ class CostProcessor:
     def __init__(self, maestra_path, orion_path, bd_ila_path):
         self.maestra_processor = ExcelProcessor(maestra_path)
         self.orion_processor = ExcelProcessor(orion_path)
-        self.ila_processor = ExcelProcessor(bd_ila_path) 
+        self.ila_processor = ExcelProcessor(bd_ila_path)
+        self.path_manager = PathManager() 
 
     def get_matching_groups(self):
     # Leer los archivos Excel
@@ -56,29 +58,10 @@ class CostProcessor:
                 result.append("N/A")  # Si no hay coincidencia o el valor es "N/A"
 
         return result
-    def get_json_path(self):
-        if getattr(sys, 'frozen', False):
-        # Si el script está siendo ejecutado desde el .exe
-            current_dir = sys._MEIPASS  # Directorio temporal donde PyInstaller coloca los archivos
-        else:
-            # Si está siendo ejecutado como un script en desarrollo
-            current_dir = os.path.dirname(os.path.abspath(__file__))
-
-        # Subir dos niveles para salir de la carpeta "utils" y llegar al directorio raíz del proyecto
-        project_root = os.path.dirname(os.path.dirname(current_dir))
-
-        # Crear la ruta correcta al archivo JSON desde el directorio raíz del proyecto o el directorio temporal
-        json_path = os.path.join(project_root, "src", "data", "ilas.json")
-
-        # Si estás empaquetando el ejecutable con --add-data, los archivos estarán en el directorio temporal en lugar de "src/data"
-        if getattr(sys, 'frozen', False):  # Si se ejecuta como .exe
-            json_path = os.path.join(sys._MEIPASS, "data", "ilas.json")
-
-        return json_path
 
     def compare_with_json(self):
         # Obtener la ruta al archivo JSON usando el método get_json_path
-        json_path = self.get_json_path()
+        json_path = self.path_manager.get_json_path()
 
         # Leer el archivo JSON
         with open(json_path, "r", encoding="utf-8") as f:
@@ -99,7 +82,6 @@ class CostProcessor:
                 result_montos.append(1.19)  # Retorna el valor por defecto 1.19 si no hay coincidencia
 
         return result_montos
-
     def get_column_e_values(self):
         """Extrae los valores de la columna E de maestra.xlsx y los almacena en una lista.
         Si un valor está vacío o contiene '#N/A' o 'N/A', se reemplaza por 'N/A'.
@@ -136,7 +118,7 @@ class CostProcessor:
 
             # Si alguno de los valores no es un número, retornar 'N/A'
             if isinstance(val1, (int, float)) and isinstance(val2, (int, float)):
-                result.append(round(val1 * val2,2))
+                result.append(round(val1 / val2,4))
             else:
                 result.append("N/A")
 

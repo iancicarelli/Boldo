@@ -5,7 +5,7 @@ a = Analysis(
     ['main.py'],
     pathex=[],
     binaries=[],
-    datas=[('C:\\Users\\HP\\Desktop\\BoldoGit\\Boldo\\src\\data', 'data')],
+    datas=[('C:\\Users\\HP\\Desktop\\BoldoGit\\Boldo\\src\\visuals\\themes', 'visuals/themes'), ('C:\\Users\\HP\\Desktop\\BoldoGit\\Boldo\\src\\data', 'data')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},

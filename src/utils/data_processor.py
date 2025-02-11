@@ -14,6 +14,7 @@ class DataProcessor:
         # Obtener los valores calculados
         multiplied_values = self.cost_processor.multiply_lists()
         cleaned_values = self.cost_processor.replace_non_numeric_values(multiplied_values)
+        print(f"Numero de costos procesados = {len(cleaned_values)}")
 
         # Verificar que la cantidad de costos coincida con la cantidad de datos procesados
         if len(cleaned_values) != len(processed_data):
@@ -55,7 +56,7 @@ class DataProcessor:
         """Orquesta el procesamiento de datos y genera el archivo Excel final."""
         # Obtener datos procesados sin los costos
         processed_data = self.get_processed_data()
-        print(f"datos procesados{len(processed_data)}")
+        print(f"datos procesados con uxe = {len(processed_data)}")
         # Agregar los costos a los datos procesados
         processed_data_with_cost = self.add_cost_to_data(processed_data)
 
