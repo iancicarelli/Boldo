@@ -102,7 +102,7 @@ class CostProcessor:
 
 
     def multiply_lists(self):
-        """Multiplica los valores de get_column_e_values() y compare_with_json().
+        """divide los valores de get_column_e_values() y compare_with_json().
         Si alguno de los valores es 'N/A' o '#N/A', retorna 'N/A' en esa posición.
         """
         column_e_values = self.get_column_e_values()
