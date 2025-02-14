@@ -1,6 +1,6 @@
-# Boldo
+# Pino
 
-**Boldo Data Processor** es una aplicación de escritorio diseñada para manejar y procesar datos en formato Excel, específicamente enfocada en la creación de listas de costos para el sistema Orion. Desarrollada en Python y utilizando la librería `ttkthemes`, Boldo ofrece una interfaz intuitiva y funcionalidades robustas para la gestión de datos.
+**Pino Data Processor** es una aplicación de escritorio diseñada para manejar y procesar datos en formato Excel, específicamente enfocada en la creación de listas de costos para el sistema Orion. Desarrollada en Python y utilizando la librería `ttkthemes`, Boldo ofrece una interfaz intuitiva y funcionalidades robustas para la gestión de datos.
 
 ## Funcionamiento
 
